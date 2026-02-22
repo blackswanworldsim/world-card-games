@@ -1,0 +1,1 @@
+This project expects /public/assets/cards/*.svg - placeholder assets added by subagent.

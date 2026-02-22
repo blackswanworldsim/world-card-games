@@ -9,8 +9,42 @@ const SLIDES = [
   { id: 'dealing', title: 'Dealing' },
   { id: 'passing', title: 'Passing' },
   { id: 'trick', title: 'Trick Play' },
-  { id: 'scoring', title: 'Scoring' }
+  { id: 'scoring', title: 'Scoring' },
+  { id: 'gameend', title: 'Winning' }
 ]
+
+// Component to show a stack of cards (3 visible + count)
+function CardStack({ 
+  count, 
+  label, 
+  dealIndex, 
+  playerIndex 
+}: { 
+  count: number
+  label: string
+  dealIndex: number
+  playerIndex: number
+}) {
+  const playerCards = Math.max(0, Math.floor((dealIndex + 1 - playerIndex) / 4) + (dealIndex + 1 > playerIndex ? 1 : 0))
+  const displayCount = Math.min(playerCards, 3)
+  const remaining = playerCards - 3
+
+  return (
+    <div className="text-center">
+      <span className="text-xs text-slate-400">{label}</span>
+      <div className="flex items-center gap-1 mt-1">
+        <div className="flex">
+          {Array.from({length: displayCount}).map((_, i) => (
+            <CardBack key={i} className="w-8 h-11" style={{marginLeft: i > 0 ? '-20px' : '0', zIndex: i}} />
+          ))}
+        </div>
+        {remaining > 0 && (
+          <span className="text-xs text-slate-500 ml-1">+{remaining}</span>
+        )}
+      </div>
+    </div>
+  )
+}
 
 export default function HeartsPage() {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -124,7 +158,7 @@ export default function HeartsPage() {
                   <Card suit="hearts" rank="K" className="w-14 h-19" />
                   <Card suit="hearts" rank="Q" className="w-14 h-19" />
                 </div>
-                <p className="text-sm text-slate-500">Each heart = 1 point</p>
+                <p className="text-sm text-slate-500">Each <span className="text-red-500">♥ heart</span> = 1 point</p>
               </div>
 
               <div className="p-4 bg-blue-50 rounded-lg">
@@ -139,50 +173,36 @@ export default function HeartsPage() {
           {currentSlide === 1 && (
             <div className="space-y-6">
               <p className="text-slate-700 leading-relaxed">
-                Deal 13 cards to each of the 4 players. Watch the animation to see how the cards are distributed.
+                Deal 13 cards to each of the 4 players. Watch as the cards are dealt around the table.
               </p>
               
-              <div className="relative h-64 bg-white rounded-xl shadow-sm p-4">
-                {/* North */}
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 text-center">
-                  <span className="text-xs text-slate-400">North</span>
-                  <div className="flex gap-0.5 justify-center mt-1">
-                    {dealIndex >= 0 && Array.from({length: Math.min(13, Math.max(0, dealIndex - 9))}).map((_, i) => (
-                      <CardBack key={i} className="w-5 h-7" style={{marginLeft: i > 0 ? '-3px' : '0'}} />
-                    ))}
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <div className="relative h-48">
+                  {/* North */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2">
+                    <CardStack count={13} label="North" dealIndex={dealIndex} playerIndex={0} />
                   </div>
-                </div>
-                
-                {/* West */}
-                <div className="absolute left-2 top-1/2 -translate-y-1/2 text-center">
-                  <span className="text-xs text-slate-400">West</span>
-                  <div className="flex flex-col gap-0.5 mt-1">
-                    {dealIndex >= 0 && Array.from({length: Math.min(13, Math.max(0, dealIndex - 6))}).map((_, i) => (
-                      <CardBack key={i} className="w-5 h-7" style={{marginTop: i > 0 ? '-2px' : '0'}} />
-                    ))}
+                  
+                  {/* West */}
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2">
+                    <CardStack count={13} label="West" dealIndex={dealIndex} playerIndex={3} />
                   </div>
-                </div>
-                
-                {/* East */}
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 text-center">
-                  <span className="text-xs text-slate-400">East</span>
-                  <div className="flex flex-col gap-0.5 mt-1">
-                    {dealIndex >= 0 && Array.from({length: Math.min(13, Math.max(0, dealIndex - 3))}).map((_, i) => (
-                      <CardBack key={i} className="w-5 h-7" style={{marginTop: i > 0 ? '-2px' : '0'}} />
-                    ))}
+                  
+                  {/* East */}
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2">
+                    <CardStack count={13} label="East" dealIndex={dealIndex} playerIndex={1} />
                   </div>
-                </div>
-                
-                {/* South (You) */}
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center">
-                  <span className="text-xs text-slate-400">You</span>
-                  <div className="flex gap-0.5 justify-center mt-1">
-                    {dealIndex >= 0 && Array.from({length: Math.min(13, dealIndex + 1)}).map((_, i) => (
-                      <CardBack key={i} className="w-5 h-7" style={{marginLeft: i > 0 ? '-3px' : '0'}} />
-                    ))}
+                  
+                  {/* South (You) */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
+                    <CardStack count={13} label="You" dealIndex={dealIndex} playerIndex={2} />
                   </div>
                 </div>
               </div>
+
+              <p className="text-sm text-slate-500 text-center">
+                You get 13 cards at the start of each hand
+              </p>
             </div>
           )}
 
@@ -190,7 +210,7 @@ export default function HeartsPage() {
           {currentSlide === 2 && (
             <div className="space-y-6">
               <p className="text-slate-700 leading-relaxed">
-                Before each hand, you must pass 3 cards to another player. The direction changes each round: left, right, across, then no passing.
+                Before each hand, you must pass 3 cards to another player. The direction changes each round.
               </p>
               
               <div className="bg-white rounded-xl shadow-sm p-6">
@@ -235,12 +255,11 @@ export default function HeartsPage() {
           {currentSlide === 3 && (
             <div className="space-y-6">
               <p className="text-slate-700 leading-relaxed">
-                Each round, players play one card. You must follow the suit led if you can. The highest card of the led suit wins the trick.
+                Each round, players play one card. You must follow the suit led if you can. The highest card of the led suit wins.
               </p>
               
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <div className="flex flex-col items-center gap-4">
-                  {/* Play table */}
                   <div className="relative w-32 h-32 bg-slate-100 rounded-lg">
                     {trickStep >= 1 && (
                       <div className="absolute left-1/2 top-1 -translate-x-1/2">
@@ -272,7 +291,6 @@ export default function HeartsPage() {
                     )}
                   </div>
                   
-                  {/* Labels */}
                   <div className="flex justify-center gap-8 text-xs text-slate-400">
                     <span>West</span>
                     <div className="flex flex-col items-center">
@@ -286,7 +304,7 @@ export default function HeartsPage() {
 
               <div className="p-4 bg-blue-50 rounded-lg">
                 <p className="text-sm text-blue-700">
-                  <strong>Rule:</strong> If you can't follow suit, you can play any card. This is how you can get rid of hearts!
+                  <strong>Rule:</strong> If you can't follow suit, you can play any card. This is how you ditch hearts!
                 </p>
               </div>
             </div>
@@ -296,7 +314,7 @@ export default function HeartsPage() {
           {currentSlide === 4 && (
             <div className="space-y-6">
               <p className="text-slate-700 leading-relaxed">
-                At the end of each hand, count your points. The game ends when someone reaches 100 points — lowest score wins!
+                Every <span className="text-red-500 font-medium">♥ heart</span> you take is worth 1 point. Watch out for the Queen!
               </p>
               
               <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
@@ -318,8 +336,51 @@ export default function HeartsPage() {
               <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                 <p className="text-sm text-yellow-700 text-center">
                   <strong>Shooting the Moon:</strong><br />
-                  If you take ALL hearts AND the Queen of Spades, you shoot the moon! Every other player gets 26 points instead of you.
+                  Take ALL hearts AND the Queen of Spades, and everyone else gets 26 points instead of you!
                 </p>
+              </div>
+            </div>
+          )}
+
+          {/* Slide 6: Winning */}
+          {currentSlide === 5 && (
+            <div className="space-y-6">
+              <p className="text-slate-700 leading-relaxed">
+                Keep playing hands until someone reaches 100 points. The first player to hit 100 loses — lowest score wins!
+              </p>
+              
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <div className="space-y-3">
+                  {/* Scoreboard example */}
+                  <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                    <span className="font-medium text-slate-700">You</span>
+                    <span className="text-xl font-bold text-green-600">24 pts</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                    <span className="font-medium text-slate-700">North</span>
+                    <span className="text-xl font-bold text-slate-600">43 pts</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                    <span className="font-medium text-slate-700">East</span>
+                    <span className="text-xl font-bold text-slate-600">31 pts</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg border border-red-200">
+                    <span className="font-medium text-slate-700">West</span>
+                    <span className="text-xl font-bold text-red-600">100+ pts 💥</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-700 text-center">
+                  <strong>You win!</strong> You had the lowest score when West hit 100 points.
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center gap-2 text-sm text-slate-500">
+                <p>♥ = 1 point each</p>
+                <p>Q♠ = 13 points</p>
+                <p>First to 100 loses</p>
               </div>
             </div>
           )}

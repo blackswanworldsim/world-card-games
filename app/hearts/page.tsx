@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import Link from 'next/link'
 import Card, { CardBack } from '../../components/Card'
 
 const SLIDES = [
@@ -133,9 +132,27 @@ export default function HeartsPage() {
 
         {/* Carousel */}
         <div className="relative mb-6">
+          {/* Navigation arrows - positioned outside the slide area */}
+          <button 
+            onClick={() => goToSlide(currentSlide - 1)}
+            disabled={currentSlide === 0}
+            className="absolute -left-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white/95 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-slate-600 disabled:opacity-30 btn-touch"
+            aria-label="Previous slide"
+          >
+            ←
+          </button>
+          <button 
+            onClick={() => goToSlide(currentSlide + 1)}
+            disabled={currentSlide === SLIDES.length - 1}
+            className="absolute -right-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white/95 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-slate-600 disabled:opacity-30 btn-touch"
+            aria-label="Next slide"
+          >
+            →
+          </button>
+
           <div 
             ref={carouselRef}
-            className="carousel-container flex overflow-x-auto snap-x snap-mandatory"
+            className="carousel-container flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -145,66 +162,66 @@ export default function HeartsPage() {
             onMouseLeave={() => isDragging && handleTouchEnd()}
           >
             {/* Slide 1: Overview */}
-            <section className="carousel-slide min-w-full flex-shrink-0 px-2">
-              <div className="bg-white rounded-2xl shadow-lg p-6 h-96">
+            <section className="carousel-slide min-w-full flex-shrink-0 px-4">
+              <div className="bg-white rounded-2xl shadow-lg p-6 min-h-[28rem] flex flex-col">
                 <h2 className="text-lg font-semibold mb-3 text-slate-800">How to Play Hearts</h2>
                 <p className="text-sm text-slate-600 mb-6">
                   Avoid taking hearts and the Queen of Spades. Lowest score wins!
                 </p>
                 
-                <div className="flex flex-col items-center justify-center h-48">
-                  <div className="relative flex items-center gap-1 animate-pulse-glow p-6 rounded-2xl" style={{animationDuration: '3s'}}>
+                <div className="flex-1 flex flex-col items-center justify-center py-4">
+                  <div className="relative flex items-center gap-2 animate-pulse-glow p-8 rounded-2xl bg-slate-50" style={{animationDuration: '3s'}}>
                     <Card suit="hearts" rank="A" className="w-16 h-22" />
                     <Card suit="hearts" rank="K" className="w-16 h-22" />
                     <Card suit="hearts" rank="Q" className="w-16 h-22" />
                   </div>
-                  <p className="text-xs text-slate-400 mt-4">Each heart = 1 point</p>
+                  <p className="text-xs text-slate-400 mt-6">Each heart = 1 point</p>
                 </div>
               </div>
             </section>
 
             {/* Slide 2: Dealing */}
-            <section className="carousel-slide min-w-full flex-shrink-0 px-2">
-              <div className="bg-white rounded-2xl shadow-lg p-6 h-96">
+            <section className="carousel-slide min-w-full flex-shrink-0 px-4">
+              <div className="bg-white rounded-2xl shadow-lg p-6 min-h-[28rem] flex flex-col">
                 <h2 className="text-lg font-semibold mb-3 text-slate-800">Dealing</h2>
                 <p className="text-sm text-slate-600 mb-4">
                   Deal 13 cards to each of the 4 players
                 </p>
                 
-                <div className="relative h-56">
-                  {/* Player positions */}
+                <div className="flex-1 relative py-4">
+                  {/* Player positions - with proper spacing */}
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 text-center">
-                    <div className="text-xs text-slate-400 mb-1">North</div>
-                    <div className="flex gap-0.5 justify-center" style={{width: '60px'}}>
+                    <div className="text-xs text-slate-400 mb-2">North</div>
+                    <div className="flex gap-0.5 justify-center flex-wrap p-2 bg-slate-50 rounded-lg" style={{maxWidth: '80px'}}>
                       {dealIndex >= 0 && Array.from({length: Math.min(13, Math.max(0, dealIndex - 9))}).map((_, i) => (
-                        <CardBack key={i} className="w-6 h-8" style={{marginLeft: '-4px'}} />
+                        <CardBack key={i} className="w-5 h-7" style={{marginLeft: i > 0 ? '-3px' : '0'}} />
                       ))}
                     </div>
                   </div>
                   
                   <div className="absolute left-0 top-1/2 -translate-y-1/2 text-center">
-                    <div className="text-xs text-slate-400 mb-1">West</div>
-                    <div className="flex flex-col gap-0.5" style={{height: '60px'}}>
+                    <div className="text-xs text-slate-400 mb-2">West</div>
+                    <div className="flex flex-col gap-0.5 items-center p-2 bg-slate-50 rounded-lg">
                       {dealIndex >= 0 && Array.from({length: Math.min(13, Math.max(0, dealIndex - 6))}).map((_, i) => (
-                        <CardBack key={i} className="w-6 h-8" />
+                        <CardBack key={i} className="w-5 h-7" style={{marginTop: i > 0 ? '-2px' : '0'}} />
                       ))}
                     </div>
                   </div>
                   
                   <div className="absolute right-0 top-1/2 -translate-y-1/2 text-center">
-                    <div className="text-xs text-slate-400 mb-1">East</div>
-                    <div className="flex flex-col gap-0.5" style={{height: '60px'}}>
+                    <div className="text-xs text-slate-400 mb-2">East</div>
+                    <div className="flex flex-col gap-0.5 items-center p-2 bg-slate-50 rounded-lg">
                       {dealIndex >= 0 && Array.from({length: Math.min(13, Math.max(0, dealIndex - 3))}).map((_, i) => (
-                        <CardBack key={i} className="w-6 h-8" />
+                        <CardBack key={i} className="w-5 h-7" style={{marginTop: i > 0 ? '-2px' : '0'}} />
                       ))}
                     </div>
                   </div>
                   
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
-                    <div className="text-xs text-slate-400 mb-1">You (South)</div>
-                    <div className="flex gap-0.5 justify-center flex-wrap-reverse" style={{width: '80px'}}>
+                    <div className="text-xs text-slate-400 mb-2">You (South)</div>
+                    <div className="flex gap-0.5 justify-center flex-wrap p-2 bg-slate-50 rounded-lg" style={{maxWidth: '100px'}}>
                       {dealIndex >= 0 && Array.from({length: Math.min(13, dealIndex + 1)}).map((_, i) => (
-                        <CardBack key={i} className="w-6 h-8" style={{marginLeft: '-4px'}} />
+                        <CardBack key={i} className="w-5 h-7" style={{marginLeft: i > 0 ? '-3px' : '0'}} />
                       ))}
                     </div>
                   </div>
@@ -213,49 +230,51 @@ export default function HeartsPage() {
             </section>
 
             {/* Slide 3: Passing */}
-            <section className="carousel-slide min-w-full flex-shrink-0 px-2">
-              <div className="bg-white rounded-2xl shadow-lg p-6 h-96">
+            <section className="carousel-slide min-w-full flex-shrink-0 px-4">
+              <div className="bg-white rounded-2xl shadow-lg p-6 min-h-[28rem] flex flex-col">
                 <h2 className="text-lg font-semibold mb-3 text-slate-800">Passing Cards</h2>
                 <p className="text-sm text-slate-600 mb-4">
                   Select 3 cards to pass to the left
                 </p>
                 
-                <div className="relative h-56 flex items-center">
-                  <div className="flex-1 text-center">
-                    <div className="text-xs text-slate-400 mb-2">Your hand</div>
-                    <div className="flex justify-center gap-2">
-                      <div className={`transition-all duration-500 ${passingStep >= 1 ? 'opacity-0 -translate-x-20' : ''}`}>
-                        <Card suit="hearts" rank="Q" className="w-12 h-16" />
-                      </div>
-                      <div className={`transition-all duration-500 delay-100 ${passingStep >= 2 ? 'opacity-0 -translate-x-20' : ''}`}>
-                        <Card suit="spades" rank="Q" className="w-12 h-16" />
-                      </div>
-                      <div className={`transition-all duration-500 delay-200 ${passingStep >= 3 ? 'opacity-0 -translate-x-20' : ''}`}>
-                        <Card suit="hearts" rank="A" className="w-12 h-16" />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="text-3xl text-slate-300 mx-4">→</div>
-                  
-                  <div className="flex-1 text-center">
-                    <div className="text-xs text-slate-400 mb-2">Player to your left</div>
-                    <div className="flex justify-center gap-1">
-                      {passingStep >= 1 && (
-                        <div className="animate-slide-left" style={{animationDelay: '0s'}}>
+                <div className="flex-1 flex items-center justify-center py-4">
+                  <div className="flex items-center gap-4">
+                    <div className="text-center">
+                      <div className="text-xs text-slate-400 mb-3">Your hand</div>
+                      <div className="flex justify-center gap-2 p-4 bg-slate-50 rounded-lg">
+                        <div className={`transition-all duration-500 ${passingStep >= 1 ? 'opacity-0 -translate-x-12' : ''}`}>
                           <Card suit="hearts" rank="Q" className="w-12 h-16" />
                         </div>
-                      )}
-                      {passingStep >= 2 && (
-                        <div className="animate-slide-left" style={{animationDelay: '0.1s'}}>
+                        <div className={`transition-all duration-500 delay-100 ${passingStep >= 2 ? 'opacity-0 -translate-x-12' : ''}`}>
                           <Card suit="spades" rank="Q" className="w-12 h-16" />
                         </div>
-                      )}
-                      {passingStep >= 3 && (
-                        <div className="animate-slide-left" style={{animationDelay: '0.2s'}}>
+                        <div className={`transition-all duration-500 delay-200 ${passingStep >= 3 ? 'opacity-0 -translate-x-12' : ''}`}>
                           <Card suit="hearts" rank="A" className="w-12 h-16" />
                         </div>
-                      )}
+                      </div>
+                    </div>
+                    
+                    <div className="text-3xl text-slate-300">→</div>
+                    
+                    <div className="text-center">
+                      <div className="text-xs text-slate-400 mb-3">To your left</div>
+                      <div className="flex justify-center gap-1 p-4 bg-slate-50 rounded-lg min-h-[88px]">
+                        {passingStep >= 1 && (
+                          <div className="animate-slide-left" style={{animationDelay: '0s'}}>
+                            <Card suit="hearts" rank="Q" className="w-12 h-16" />
+                          </div>
+                        )}
+                        {passingStep >= 2 && (
+                          <div className="animate-slide-left" style={{animationDelay: '0.1s'}}>
+                            <Card suit="spades" rank="Q" className="w-12 h-16" />
+                          </div>
+                        )}
+                        {passingStep >= 3 && (
+                          <div className="animate-slide-left" style={{animationDelay: '0.2s'}}>
+                            <Card suit="hearts" rank="A" className="w-12 h-16" />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -263,75 +282,79 @@ export default function HeartsPage() {
             </section>
 
             {/* Slide 4: Trick Play */}
-            <section className="carousel-slide min-w-full flex-shrink-0 px-2">
-              <div className="bg-white rounded-2xl shadow-lg p-6 h-96">
+            <section className="carousel-slide min-w-full flex-shrink-0 px-4">
+              <div className="bg-white rounded-2xl shadow-lg p-6 min-h-[28rem] flex flex-col">
                 <h2 className="text-lg font-semibold mb-3 text-slate-800">Playing a Trick</h2>
                 <p className="text-sm text-slate-600 mb-4">
                   Must follow suit if possible. Highest card of led suit wins.
                 </p>
                 
-                <div className="relative h-56 flex items-center justify-center">
-                  {/* Center area */}
-                  <div className="relative w-32 h-32 bg-slate-50 rounded-lg border border-slate-200">
-                    {/* Cards fly in from 4 directions */}
+                <div className="flex-1 flex flex-col items-center justify-center py-4">
+                  {/* Center play area */}
+                  <div className="relative w-40 h-40 bg-slate-50 rounded-xl border border-slate-200 mb-4">
+                    {/* Cards positioned within the box */}
                     {trickStep >= 1 && (
-                      <div className="absolute left-1/2 top-2 -translate-x-1/2 animate-fly-to-center" style={{'--start-x': '0', '--start-y': '-50px'} as React.CSSProperties}>
+                      <div className="absolute left-1/2 top-2 -translate-x-1/2">
                         <Card suit="clubs" rank="2" className="w-10 h-14" />
                       </div>
                     )}
                     {trickStep >= 2 && (
-                      <div className="absolute right-2 top-1/2 -translate-y-1/2 animate-fly-to-center" style={{'--start-x': '50px', '--start-y': '0', animationDelay: '0.1s'} as React.CSSProperties}>
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2">
                         <Card suit="clubs" rank="Q" className="w-10 h-14" />
                       </div>
                     )}
                     {trickStep >= 3 && (
-                      <div className="absolute left-1/2 bottom-2 -translate-x-1/2 animate-fly-to-center" style={{'--start-x': '0', '--start-y': '50px', animationDelay: '0.2s'} as React.CSSProperties}>
+                      <div className="absolute left-1/2 bottom-2 -translate-x-1/2">
                         <Card suit="clubs" rank="8" className="w-10 h-14" />
                       </div>
                     )}
                     {trickStep >= 4 && (
-                      <div className="absolute left-2 top-1/2 -translate-y-1/2 animate-fly-to-center" style={{'--start-x': '-50px', '--start-y': '0', animationDelay: '0.3s'} as React.CSSProperties}>
+                      <div className="absolute left-2 top-1/2 -translate-y-1/2">
                         <Card suit="clubs" rank="5" className="w-10 h-14" />
                       </div>
                     )}
                     
                     {trickStep === 4 && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="bg-yellow-100 px-2 py-1 rounded text-xs font-medium text-yellow-700 animate-heart-bounce">
+                        <div className="bg-yellow-100 px-3 py-1.5 rounded text-xs font-medium text-yellow-700 animate-heart-bounce">
                           Queen wins!
                         </div>
                       </div>
                     )}
                   </div>
                   
-                  {/* Player labels */}
-                  <div className="absolute top-4 left-1/2 -translate-x-1/2 text-xs text-slate-400">North</div>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400">East</div>
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs text-slate-400">South (You)</div>
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xs text-slate-400">West</div>
+                  {/* Player labels - below the play area */}
+                  <div className="flex items-center justify-center gap-8 text-xs text-slate-400">
+                    <span>West</span>
+                    <div className="flex flex-col items-center gap-1">
+                      <span>North</span>
+                      <span>South (You)</span>
+                    </div>
+                    <span>East</span>
+                  </div>
                 </div>
               </div>
             </section>
 
             {/* Slide 5: Scoring */}
-            <section className="carousel-slide min-w-full flex-shrink-0 px-2">
-              <div className="bg-white rounded-2xl shadow-lg p-6 h-96">
+            <section className="carousel-slide min-w-full flex-shrink-0 px-4">
+              <div className="bg-white rounded-2xl shadow-lg p-6 min-h-[28rem] flex flex-col">
                 <h2 className="text-lg font-semibold mb-3 text-slate-800">Scoring</h2>
                 <p className="text-sm text-slate-600 mb-4">
                   Each heart is 1 point. Queen of Spades is 13 points.
                 </p>
                 
-                <div className="flex flex-col items-center justify-center h-56 gap-6">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
+                <div className="flex-1 flex flex-col items-center justify-center gap-6 py-4">
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg">
+                    <div className="flex items-center gap-2">
                       <Card suit="hearts" rank="2" className="w-12 h-16" />
                       <span className="text-2xl text-slate-400">=</span>
                       <span className="text-2xl font-bold text-red-500">1 pt</span>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg">
+                    <div className="flex items-center gap-2">
                       <div className={`transition-all duration-700 ${showQS ? 'animate-flip' : ''}`}>
                         <Card suit="spades" rank="Q" className="w-12 h-16" />
                       </div>
@@ -340,7 +363,7 @@ export default function HeartsPage() {
                     </div>
                   </div>
                   
-                  <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200 max-w-xs">
                     <p className="text-xs text-yellow-700 text-center">
                       <strong>Shooting the Moon:</strong><br />
                       Take ALL hearts AND the Queen of Spades.<br />
@@ -351,24 +374,6 @@ export default function HeartsPage() {
               </div>
             </section>
           </div>
-
-          {/* Navigation arrows */}
-          <button 
-            onClick={() => goToSlide(currentSlide - 1)}
-            disabled={currentSlide === 0}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-slate-600 disabled:opacity-30 btn-touch"
-            aria-label="Previous slide"
-          >
-            ←
-          </button>
-          <button 
-            onClick={() => goToSlide(currentSlide + 1)}
-            disabled={currentSlide === SLIDES.length - 1}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-slate-600 disabled:opacity-30 btn-touch"
-            aria-label="Next slide"
-          >
-            →
-          </button>
         </div>
 
         {/* Dots indicator */}
@@ -383,16 +388,6 @@ export default function HeartsPage() {
               aria-label={`Go to ${slide.title}`}
             />
           ))}
-        </div>
-
-        {/* CTA */}
-        <div className="flex justify-center">
-          <Link 
-            href="/hearts/demo" 
-            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg btn-touch"
-          >
-            Try Interactive Demo →
-          </Link>
         </div>
       </div>
     </main>

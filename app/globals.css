@@ -207,6 +207,19 @@
   padding: 12px 24px;
 }
 
+/* Utility classes */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.h-22 {
+  height: 5.5rem;
+}
+
 /* Responsive card sizing */
 @media (max-width: 640px) {
   :root {
